@@ -18,13 +18,13 @@ function pregQuote (str, delimiter) {
 }
 
 // 在第一次使用的时候初始化
-var inited = false;
+// var inited = false;
 function init(conf) {
 
     // 避免重复执行。
-    if (inited) {
-        return;
-    }
+    // if (inited) {
+    //     return;
+    // }
 
     // 左分隔符
     var ld = conf.left_delimiter ||
@@ -191,7 +191,7 @@ function init(conf) {
         }
     })();
 
-    inited = true;
+    // inited = true;
 }
 
 var parser = module.exports = function(content, file, conf) {
@@ -371,7 +371,7 @@ function wrapAMD(content, file, conf, shim) {
     }
 
     if (shim.init) {
-        affix = 'modules.exports = ('+shim.init+')('+(function() {
+        affix = 'module.exports = ('+shim.init+')('+(function() {
             var deps = [];
 
             if (shim.deps) {
