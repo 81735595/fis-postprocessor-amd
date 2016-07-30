@@ -456,35 +456,34 @@ function resolveModuleId(id, file, conf, modulename) {
     var pluginPath, info, m, pkg, path, dirs, item, main;
     var dir, lastdir, i, len, ns, subpath, idx, sibling, resolved;
 
-    // 支持 amd plugin
-    idx = id.indexOf('!');
-    if (~idx) {
-        pluginPath = id.substring(idx + 1);
-        id = id.substring(0, idx);
-    }
-
-    if (pluginPath) {
-        info = fis.uri(pluginPath, file.dirname);
-        if (info.file && info.file.isFile()) {
-
-            if (info.file.useHash && fis.compile.settings.hash) {
-                compileFile(info.file);
-            }
-
-            var query = (info.file.query && info.query) ? '&' + info.query.substring(1) : info.query;
-            var url = info.file.getUrl(fis.compile.settings.hash, fis.compile.settings.domain);
-            var hash = info.hash || info.file.hash;
-            pluginPath = info.quote + url + query + hash + info.quote;
-        }
-
-        info = null;
-    }
-
     // convert baseUrl
     if (baseUrl[0] !== '/') {
         baseUrl = pth.join(root, baseUrl);
     }
     baseUrl = pth.resolve(baseUrl);
+
+    // 支持 amd plugin
+    idx = id.indexOf('!');
+    if (~idx) {
+        pluginPath = id.substring(idx + 1);
+        id = id.substring(0, idx);
+
+        if (pluginPath[0] === '.') {
+            info = fis.uri(pluginPath, file.dirname)
+        } else {
+            info = fis.uri(pluginPath, baseUrl)
+        }
+        info.file.amdPlugin = id
+        id = info.file.id
+        pluginPath = undefined
+        compileFile(info.file);
+        id = info.file.id
+        info = null;
+        return {
+            file: info && info.file,
+            pluginPath: pluginPath
+        }
+    }
 
     if (id === '.' || id.substring(id.length-1) === '/') {
         // 真麻烦，还得去查找当前目录是不是 match 一个 packagers。
