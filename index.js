@@ -474,14 +474,9 @@ function resolveModuleId(id, file, conf, modulename) {
             info = fis.uri(pluginPath, baseUrl)
         }
         info.file.amdPlugin = id
-        id = info.file.id
-        pluginPath = undefined
         compileFile(info.file);
-        id = info.file.id
-        info = null;
         return {
-            file: info && info.file,
-            pluginPath: pluginPath
+            file: info.file
         }
     }
 
