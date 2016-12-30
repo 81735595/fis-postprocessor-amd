@@ -18,16 +18,17 @@ function pregQuote (str, delimiter) {
 }
 
 // 在第一次使用的时候初始化
-// var inited = false;
+var inited = false;
+var _conf;
 function init(conf) {
 
     // 避免重复执行。
     // if (inited) {
-    //     return;
+        // return ;
     // }
 
     // 左分隔符
-    var ld = conf.left_delimiter ||
+    var ld = /.left_delimiter ||
             fis.config.get('settings.template.left_delimiter') ||
             fis.config.get('settings.smarty.left_delimiter') || '{%';
 
@@ -190,7 +191,7 @@ function init(conf) {
             }
         }
     })();
-
+    return conf;
     // inited = true;
 }
 
@@ -199,8 +200,10 @@ var parser = module.exports = function(content, file, conf) {
     if (file.useAMD === false) {
         return content;
     }
-
-    init(conf);
+    if (!inited) {
+        _conf = init(conf);
+        inited = true;
+    }
 
     // 标记一下，避免重复compile
     hash[file.realpath] = true;
@@ -214,9 +217,9 @@ var parser = module.exports = function(content, file, conf) {
     file.extras.paths = file.extras.paths || {};
 
     if (file.isHtmlLike) {
-        content = parser.parseHtml(content, file, conf);
+        content = parser.parseHtml(content, file, _conf);
     } else if (file.isJsLike) {
-        content = parser.parseJs(content, file, conf);
+        content = parser.parseJs(content, file, _conf);
     }
 
     // 减少 map.json 体积，把没用的删了。
