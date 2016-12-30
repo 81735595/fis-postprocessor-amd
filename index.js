@@ -28,7 +28,7 @@ function init(conf) {
     // }
 
     // 左分隔符
-    var ld = /.left_delimiter ||
+    var ld = conf.left_delimiter ||
             fis.config.get('settings.template.left_delimiter') ||
             fis.config.get('settings.smarty.left_delimiter') || '{%';
 
